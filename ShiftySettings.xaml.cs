@@ -37,11 +37,14 @@ namespace Shifty
         static extern IntPtr GetForegroundWindow();
         [DllImport("user32.dll")]
         static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         const short SWP_NOMOVE = 0X2;
         const short SWP_NOSIZE = 1;
         const short SWP_NOZORDER = 0X4;
         const int SWP_SHOWWINDOW = 0x0040;
+        const int SW_SHOWNORMAL = 1;
 
         KeyboardHook LeftHook = new Shifty.KeyboardHook();
         KeyboardHook RightHook = new Shifty.KeyboardHook();
@@ -162,6 +165,16 @@ namespace Shifty
                 String msg = String.Format("Moved window named {0} to position: {1}, {2}, {3}, {4}",
                     windowName, x, y, width, height);
                 Console.WriteLine(msg);
+            }
+
+            // record the placement of the target window
+            var placement = NativeMethods.GetPlacement(handle);
+
+            // ensure the window is not maximized
+            if (placement.showCmd == NativeMethods.ShowWindowCommands.Maximized)
+            {
+                Console.WriteLine("Unmaximizing");
+                ShowWindow(handle, SW_SHOWNORMAL);
             }
 
             // move the window to the specified location
