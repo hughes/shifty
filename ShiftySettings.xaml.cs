@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Reflection;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -61,8 +62,11 @@ namespace Shifty
             InitializeComponent();
             Console.WriteLine("Initialized");
 
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            versionText.Text = String.Format("shifty {0}", assembly.GetName().Version.ToString());
+
             ModifierKeys modifier = ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Win;
-            
+
             // todo: clean this up and load settings from file
             LeftHook.KeyPressed += new EventHandler<KeyPressedEventArgs>(
                 ShifterFunc(Zero, Zero, Half(GetWidth), GetHeight));
@@ -124,12 +128,12 @@ namespace Shifty
         {
             return 0;
         }
-        
+
         private int GetWidth()
         {
             return (int)screenSize.WorkingArea.Width;
         }
-        
+
         private int GetHeight()
         {
             return (int)screenSize.WorkingArea.Height;
@@ -164,11 +168,50 @@ namespace Shifty
             SetWindowPos(handle, 0, x, y, width, height, SWP_NOZORDER | SWP_SHOWWINDOW);
         }
 
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            Console.WriteLine("OnSourceInitialized");
+            base.OnSourceInitialized(e);
+            HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
+            source.AddHook(WndProc);
+        }
+
+        protected IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            // this gets called a lot
+            // Console.WriteLine("Got a message");
+            if (msg == NativeMethods.WM_SHOWSHIFTY)
+            {
+                Console.WriteLine("Totally handled that guys");
+                ShowWindow();
+                handled = true;
+            }
+            return IntPtr.Zero;
+        }
+
+        private void ShowWindow()
+        {
+            // ensure the window is not minimzed
+            if(WindowState == WindowState.Minimized)
+            {
+                Console.WriteLine("Unminimizing");
+                WindowState = WindowState.Normal;
+            }
+
+            // ensure the window is on top
+            bool top = Topmost;
+            Topmost = true;
+            Topmost = top;
+
+            // steal focus
+            Activate();
+        }
+
         private void OpenGithub(object sender, RequestNavigateEventArgs e)
         {
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
-        }
 
+        }
     }
 }
