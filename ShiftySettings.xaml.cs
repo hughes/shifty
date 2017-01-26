@@ -24,9 +24,9 @@ namespace Shifty
     // this is required in order to get the size of the monitor
     static class ExtensionsForWPF
     {
-        public static System.Windows.Forms.Screen GetScreen(this Window window)
+        public static System.Windows.Forms.Screen GetScreen(IntPtr handle)
         {
-            return System.Windows.Forms.Screen.FromHandle(new WindowInteropHelper(window).Handle);
+            return System.Windows.Forms.Screen.FromHandle(handle);
         }
     }
 
@@ -145,9 +145,9 @@ namespace Shifty
 
         }
 
-        private void UpdateScreenSize()
+        private void UpdateScreenSize(IntPtr handle)
         {
-            screenSize = ExtensionsForWPF.GetScreen(this);
+            screenSize = ExtensionsForWPF.GetScreen(handle);
         }
 
         public Action<object, KeyPressedEventArgs> ShifterFunc(Func<int> x, Func<int> y, Func<int> width, Func<int> height)
@@ -155,9 +155,11 @@ namespace Shifty
             Console.WriteLine("Generated shifter function");
             Action<object, KeyPressedEventArgs> shifter = delegate (object sender, KeyPressedEventArgs e)
             {
+                // get the handle for the focused window
+                var handle = GetForegroundWindow();
                 Console.WriteLine("Activated shifter function");
-                UpdateScreenSize();
-                MoveWindowTo(x(), y(), width(), height());
+                UpdateScreenSize(handle);
+                MoveWindowTo(handle, screenSize.Bounds.Left + x(), screenSize.Bounds.Top + y(), width(), height());
             };
 
             return shifter;
@@ -187,10 +189,8 @@ namespace Shifty
             };
         }
 
-        private void MoveWindowTo(int x, int y, int width, int height)
+        private void MoveWindowTo(IntPtr handle, int x, int y, int width, int height)
         {
-            // get the handle for the focused window
-            var handle = GetForegroundWindow();
 
             // attempt to log the action
             const int nChars = 256;

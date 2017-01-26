@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:Shifty"
         mc:Ignorable="d"
         Title="Shifty Settings" Height="525" Width="525"
-        MinHeight="525" MinWidth="525" Icon="shifty.ico">
+        MinHeight="525" MinWidth="525" Icon="{DynamicResource ShiftyIcon}">
     <Window.Resources>
         <local:ExitCommand x:Key="ExitCommand" />
         <local:OpenCommand x:Key="OpenCommand" />
@@ -21,6 +21,7 @@
                 Command="{StaticResource ExitCommand}"
             />
         </ContextMenu>
+        <BitmapImage x:Key="ShiftyIcon" CreateOptions="IgnoreImageCache" CacheOption="OnLoad" UriSource="C:\Users\hughe\documents\visual studio 2015\Projects\Shifty\Shifty\shifty.ico"/>
     </Window.Resources>
     <Grid>
         <TextBlock x:Name="textBlock" Margin="173,14,0,0" TextWrapping="Wrap" Text="&gt;_&gt;" VerticalAlignment="Top" RenderTransformOrigin="-4.831,-1.634" FontSize="48" FontWeight="Bold" TextAlignment="Center" FontFamily="Consolas" HorizontalAlignment="Left" Width="158"/>
