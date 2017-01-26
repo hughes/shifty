@@ -3,10 +3,25 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
         xmlns:local="clr-namespace:Shifty"
         mc:Ignorable="d"
         Title="Shifty Settings" Height="525" Width="525"
-        MinHeight="525" MinWidth="525">
+        MinHeight="525" MinWidth="525" Icon="shifty.ico">
+    <Window.Resources>
+        <local:ExitCommand x:Key="ExitCommand" />
+        <local:OpenCommand x:Key="OpenCommand" />
+        <ContextMenu x:Key="ShiftyMenu">
+            <MenuItem
+                Header="Open"
+                Command="{StaticResource OpenCommand}"
+            />
+            <MenuItem 
+                Header="Exit"
+                Command="{StaticResource ExitCommand}"
+            />
+        </ContextMenu>
+    </Window.Resources>
     <Grid>
         <TextBlock x:Name="textBlock" Margin="173,14,0,0" TextWrapping="Wrap" Text="&gt;_&gt;" VerticalAlignment="Top" RenderTransformOrigin="-4.831,-1.634" FontSize="48" FontWeight="Bold" TextAlignment="Center" FontFamily="Consolas" HorizontalAlignment="Left" Width="158"/>
         <Rectangle Fill="#FFF4F4F5" Margin="48,116,0,0" Stroke="Black" HorizontalAlignment="Left" Width="186" Height="98" VerticalAlignment="Top" Opacity="0.5"/>
@@ -38,5 +53,15 @@
         </Hyperlink></TextBlock>
         <TextBlock x:Name="versionText" HorizontalAlignment="Right" Margin="0,420,62,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="shifty {0}" TextAlignment="Right"/>
 
+        <tb:TaskbarIcon
+            x:Name="myNotifyIcon"
+            ToolTipText="Shifty"
+            Visibility="Visible"
+            IconSource="shifty.ico"
+            ContextMenu="{StaticResource ShiftyMenu}"
+            MenuActivation="LeftOrRightClick"
+        >
+        </tb:TaskbarIcon>
     </Grid>
+
 </Window>

@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
+using System.ComponentModel;
 
 namespace Shifty
 {
@@ -27,6 +28,40 @@ namespace Shifty
         {
             return System.Windows.Forms.Screen.FromHandle(new WindowInteropHelper(window).Handle);
         }
+    }
+
+    public class OpenCommand : ICommand
+    {
+        public void Execute(object parameter)
+        {
+            NativeMethods.PostMessage(
+               (IntPtr)NativeMethods.HWND_BROADCAST,
+               NativeMethods.WM_SHOWSHIFTY,
+               IntPtr.Zero,
+               IntPtr.Zero);
+        }
+
+        public bool CanExecute(object parameter)
+        {
+            return true;
+        }
+
+        public event EventHandler CanExecuteChanged;
+    }
+
+    public class ExitCommand : ICommand
+    {
+        public void Execute(object parameter)
+        {
+            System.Windows.Application.Current.Shutdown();
+        }
+
+        public bool CanExecute(object parameter)
+        {
+            return true;
+        }
+
+        public event EventHandler CanExecuteChanged;
     }
 
     public partial class MainWindow : Window
@@ -65,6 +100,7 @@ namespace Shifty
             InitializeComponent();
             Console.WriteLine("Initialized");
 
+            //var exitBinding = new CommandBinding(Commands.Exit, DoExit, CommandCanExecute);
             Assembly assembly = Assembly.GetExecutingAssembly();
             versionText.Text = String.Format("shifty {0}", assembly.GetName().Version.ToString());
 
@@ -204,11 +240,14 @@ namespace Shifty
 
         private void ShowWindow()
         {
+            this.Show();
+
             // ensure the window is not minimzed
-            if(WindowState == WindowState.Minimized)
+            if (WindowState == WindowState.Minimized)
             {
                 Console.WriteLine("Unminimizing");
                 WindowState = WindowState.Normal;
+                
             }
 
             // ensure the window is on top
@@ -225,6 +264,28 @@ namespace Shifty
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
 
+        }
+
+        protected override void OnStateChanged(EventArgs e)
+        {
+            if(WindowState == WindowState.Minimized)
+            {
+                this.Hide();
+            }
+            base.OnStateChanged(e);
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            e.Cancel = true;
+            this.Hide();
+            base.OnClosing(e);
+        }
+
+        private void CommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            Console.WriteLine("someone asked if i can execute");
+            e.CanExecute = true;
         }
     }
 }
