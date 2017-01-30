@@ -97,6 +97,9 @@ namespace Shifty
 
         public MainWindow()
         {
+            int threadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
+            Console.WriteLine(string.Format("settings window thread id: {0}", threadId));
+
             InitializeComponent();
             Console.WriteLine("Initialized");
 
@@ -108,39 +111,39 @@ namespace Shifty
 
             // todo: clean this up and load settings from file
             LeftHook.KeyPressed += new EventHandler<KeyPressedEventArgs>(
-                ShifterFunc(Zero, Zero, Half(GetWidth), GetHeight));
+                ShifterFunc(0.0, 0.0, 0.5, 1.0));
             LeftHook.RegisterHotKey(modifier, Keys.NumPad4);
 
             RightHook.KeyPressed += new EventHandler<KeyPressedEventArgs>(
-                ShifterFunc(Half(GetWidth), Zero, Half(GetWidth), GetHeight));
+                ShifterFunc(0.5, 0.0, 0.5, 1.0));
             RightHook.RegisterHotKey(modifier, Keys.NumPad6);
 
             TopHook.KeyPressed += new EventHandler<KeyPressedEventArgs>(
-                ShifterFunc(Zero, Zero, GetWidth, Half(GetHeight)));
+                ShifterFunc(0.0, 0.0, 1.0, 0.5));
             TopHook.RegisterHotKey(modifier, Keys.NumPad8);
 
             BottomHook.KeyPressed += new EventHandler<KeyPressedEventArgs>(
-                ShifterFunc(Zero, Half(GetHeight), GetWidth, Half(GetHeight)));
+                ShifterFunc(0.0, 0.5, 1.0, 0.5));
             BottomHook.RegisterHotKey(modifier, Keys.NumPad2);
 
             TopLeftHook.KeyPressed += new EventHandler<KeyPressedEventArgs>(
-                ShifterFunc(Zero, Zero, Half(GetWidth), Half(GetHeight)));
+                ShifterFunc(0.0, 0.0, 0.5, 0.5));
             TopLeftHook.RegisterHotKey(modifier, Keys.NumPad7);
 
             TopRightHook.KeyPressed += new EventHandler<KeyPressedEventArgs>(
-                ShifterFunc(Half(GetWidth), Zero, Half(GetWidth), Half(GetHeight)));
+                ShifterFunc(0.5, 0.0, 0.5, 0.5));
             TopRightHook.RegisterHotKey(modifier, Keys.NumPad9);
 
             BottomLeftHook.KeyPressed += new EventHandler<KeyPressedEventArgs>(
-                ShifterFunc(Zero, Half(GetHeight), Half(GetWidth), Half(GetHeight)));
+                ShifterFunc(0.0, 0.5, 0.5, 0.5));
             BottomLeftHook.RegisterHotKey(modifier, Keys.NumPad1);
 
             BottomRightHook.KeyPressed += new EventHandler<KeyPressedEventArgs>(
-                ShifterFunc(Half(GetWidth), Half(GetHeight), Half(GetWidth), Half(GetHeight)));
+                ShifterFunc(0.5, 0.5, 0.5, 0.5));
             BottomRightHook.RegisterHotKey(modifier, Keys.NumPad3);
 
             CenterHook.KeyPressed += new EventHandler<KeyPressedEventArgs>(
-                ShifterFunc(Half(Half(GetWidth)), Half(Half(GetHeight)), Half(GetWidth), Half(GetHeight)));
+                ShifterFunc(0.25, 0.25, 0.5, 0.5));
             CenterHook.RegisterHotKey(modifier, Keys.NumPad5);
 
         }
@@ -150,7 +153,7 @@ namespace Shifty
             screenSize = ExtensionsForWPF.GetScreen(handle);
         }
 
-        public Action<object, KeyPressedEventArgs> ShifterFunc(Func<int> x, Func<int> y, Func<int> width, Func<int> height)
+        public Action<object, KeyPressedEventArgs> ShifterFunc(double x, double y, double width, double height)
         {
             Console.WriteLine("Generated shifter function");
             Action<object, KeyPressedEventArgs> shifter = delegate (object sender, KeyPressedEventArgs e)
@@ -159,39 +162,30 @@ namespace Shifty
                 var handle = GetForegroundWindow();
                 Console.WriteLine("Activated shifter function");
                 UpdateScreenSize(handle);
-                MoveWindowTo(handle, screenSize.Bounds.Left + x(), screenSize.Bounds.Top + y(), width(), height());
+                MoveWindowTo(
+                    handle,
+                    screenSize.Bounds.Left + (int)(x*(double)GetWidth()),
+                    screenSize.Bounds.Top + (int)(y*(double)GetHeight()),
+                    (int)(width*(double)GetWidth()),
+                    (int)(height*(double)GetHeight()));
             };
 
             return shifter;
         }
 
-        private int Zero()
-        {
-            return 0;
-        }
-
         private int GetWidth()
         {
-            return (int)screenSize.WorkingArea.Width;
+            return screenSize.WorkingArea.Width;
         }
 
         private int GetHeight()
         {
-            return (int)screenSize.WorkingArea.Height;
+            return screenSize.WorkingArea.Height;
         }
-
-        private Func<int> Half(Func<int> getValue)
-        {
-            // is this really... reasonable?
-            return delegate ()
-            {
-                return getValue() / 2;
-            };
-        }
-
+        
         private void MoveWindowTo(IntPtr handle, int x, int y, int width, int height)
         {
-
+            
             // attempt to log the action
             const int nChars = 256;
             StringBuilder Buff = new StringBuilder(nChars);
@@ -232,13 +226,13 @@ namespace Shifty
             if (msg == NativeMethods.WM_SHOWSHIFTY)
             {
                 Console.WriteLine("Totally handled that guys");
-                ShowWindow();
+                BringToTop();
                 handled = true;
             }
             return IntPtr.Zero;
         }
 
-        private void ShowWindow()
+        private void BringToTop()
         {
             this.Show();
 
@@ -247,7 +241,7 @@ namespace Shifty
             {
                 Console.WriteLine("Unminimizing");
                 WindowState = WindowState.Normal;
-                
+
             }
 
             // ensure the window is on top
