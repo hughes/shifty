@@ -6,8 +6,8 @@
         xmlns:tb="http://www.hardcodet.net/taskbar"
         xmlns:local="clr-namespace:Shifty"
         mc:Ignorable="d"
-        Title="Shifty Settings" Height="525" Width="525"
-        MinHeight="525" MinWidth="525" Icon="./shifty.ico">
+        Title="Shifty Settings" Height="500" Width="525"
+        MinHeight="500" MinWidth="525" Icon="./shifty.ico">
     <Window.Resources>
         <local:ExitCommand x:Key="ExitCommand" />
         <local:OpenCommand x:Key="OpenCommand" />
@@ -47,11 +47,10 @@
         <TextBlock x:Name="textBlock2_Copy5" HorizontalAlignment="Left" Margin="162,277,0,0" TextWrapping="Wrap" Text="NumPad9" VerticalAlignment="Top"/>
         <TextBlock x:Name="textBlock2_Copy6" HorizontalAlignment="Left" Margin="162,324,0,0" TextWrapping="Wrap" Text="NumPad3" VerticalAlignment="Top"/>
         <TextBlock x:Name="textBlock2_Copy7" HorizontalAlignment="Left" Margin="340,303,0,0" TextWrapping="Wrap" Text="NumPad5" VerticalAlignment="Top"/>
-        <TextBlock x:Name="textBlock3" HorizontalAlignment="Left" Margin="54,393,0,0" TextWrapping="Wrap" VerticalAlignment="Top"><Run Text="ToDo:"/><LineBreak/><Run Text="- Customize hotkeys"/><LineBreak/><Run Text="- Tray icon mode"/><LineBreak/><Run Text="- Single application instance"/></TextBlock>
-        <TextBlock x:Name="textBlock4" HorizontalAlignment="Right" Margin="0,441,62,0" TextWrapping="Wrap" VerticalAlignment="Top">   <Hyperlink NavigateUri="https://github.com/hughes/shifty" RequestNavigate="OpenGithub">
-            github
+        <TextBlock x:Name="textBlock4" HorizontalAlignment="Right" Margin="0,419,62,0" TextWrapping="Wrap" VerticalAlignment="Top">   <Hyperlink NavigateUri="https://github.com/hughes/shifty" RequestNavigate="OpenGithub">
+            github.com/hughes/shifty
         </Hyperlink></TextBlock>
-        <TextBlock x:Name="versionText" HorizontalAlignment="Right" Margin="0,420,62,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="shifty {0}" TextAlignment="Right"/>
+        <TextBlock x:Name="versionText" HorizontalAlignment="Right" Margin="0,398,62,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="shifty {0}" TextAlignment="Right"/>
 
         <tb:TaskbarIcon
             x:Name="myNotifyIcon"
