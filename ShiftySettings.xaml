@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:Shifty"
         mc:Ignorable="d"
         Title="Shifty Settings" Height="500" Width="525"
-        MinHeight="500" MinWidth="525" Icon="./shifty.ico">
+        MinHeight="500" MinWidth="525" Icon="shifty.ico">
     <Window.Resources>
         <local:ExitCommand x:Key="ExitCommand" />
         <local:OpenCommand x:Key="OpenCommand" />
@@ -21,6 +21,17 @@
                 Command="{StaticResource ExitCommand}"
             />
         </ContextMenu>
+
+        <tb:TaskbarIcon
+            x:Key="MyNotifyIcon"
+            ToolTipText="Shifty"
+            Visibility="Visible"
+            
+            ContextMenu="{StaticResource ShiftyMenu}"
+            MenuActivation="LeftOrRightClick"
+            DoubleClickCommand="{StaticResource OpenCommand}"
+        >
+        </tb:TaskbarIcon>
     </Window.Resources>
     <Grid>
         <TextBlock x:Name="textBlock" Margin="173,14,0,0" TextWrapping="Wrap" Text="&gt;_&gt;" VerticalAlignment="Top" RenderTransformOrigin="-4.831,-1.634" FontSize="48" FontWeight="Bold" TextAlignment="Center" FontFamily="Consolas" HorizontalAlignment="Left" Width="158"/>
@@ -47,20 +58,11 @@
         <TextBlock x:Name="textBlock2_Copy5" HorizontalAlignment="Left" Margin="162,277,0,0" TextWrapping="Wrap" Text="NumPad9" VerticalAlignment="Top"/>
         <TextBlock x:Name="textBlock2_Copy6" HorizontalAlignment="Left" Margin="162,324,0,0" TextWrapping="Wrap" Text="NumPad3" VerticalAlignment="Top"/>
         <TextBlock x:Name="textBlock2_Copy7" HorizontalAlignment="Left" Margin="340,303,0,0" TextWrapping="Wrap" Text="NumPad5" VerticalAlignment="Top"/>
-        <TextBlock x:Name="textBlock4" HorizontalAlignment="Right" Margin="0,419,62,0" TextWrapping="Wrap" VerticalAlignment="Top">   <Hyperlink NavigateUri="https://github.com/hughes/shifty" RequestNavigate="OpenGithub">
+        <TextBlock x:Name="textBlock4" HorizontalAlignment="Right" Margin="0,416,62,0" TextWrapping="Wrap" VerticalAlignment="Top">   <Hyperlink NavigateUri="https://github.com/hughes/shifty" RequestNavigate="OpenGithub">
             github.com/hughes/shifty
         </Hyperlink></TextBlock>
-        <TextBlock x:Name="versionText" HorizontalAlignment="Right" Margin="0,398,62,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="shifty {0}" TextAlignment="Right"/>
+        <TextBlock x:Name="versionText" HorizontalAlignment="Right" Margin="0,394,62,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="shifty {0}" TextAlignment="Right"/>
 
-        <tb:TaskbarIcon
-            x:Name="myNotifyIcon"
-            ToolTipText="Shifty"
-            Visibility="Visible"
-            IconSource="shifty.ico"
-            ContextMenu="{StaticResource ShiftyMenu}"
-            MenuActivation="LeftOrRightClick"
-        >
-        </tb:TaskbarIcon>
     </Grid>
 
 </Window>

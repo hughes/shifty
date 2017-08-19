@@ -18,6 +18,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
 using System.ComponentModel;
+using Hardcodet.Wpf.TaskbarNotification;
 
 namespace Shifty
 {
@@ -95,6 +96,8 @@ namespace Shifty
 
         private Screen screenSize;
 
+        private TaskbarIcon tb;
+
         public MainWindow()
         {
             int threadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
@@ -105,7 +108,8 @@ namespace Shifty
 
             //var exitBinding = new CommandBinding(Commands.Exit, DoExit, CommandCanExecute);
             Assembly assembly = Assembly.GetExecutingAssembly();
-            versionText.Text = String.Format("shifty {0}", assembly.GetName().Version.ToString());
+            string currentVersion = assembly.GetName().Version.ToString();
+            versionText.Text = String.Format("shifty {0}", currentVersion);
 
             ModifierKeys modifier = ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Win;
 
@@ -146,6 +150,9 @@ namespace Shifty
                 ShifterFunc(0.25, 0.25, 0.5, 0.5));
             CenterHook.RegisterHotKey(modifier, Keys.NumPad5);
 
+            tb = (TaskbarIcon)FindResource("MyNotifyIcon");
+            var icon = Shifty.Properties.Resources.shifty_icon;
+            tb.Icon = icon;
         }
 
         private void UpdateScreenSize(IntPtr handle)
